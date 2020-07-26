@@ -1,0 +1,20 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+    ci:
+        runs-on: ubuntu-latest
+        container: "composer:1.10"
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+
+            - name: Install dependencies
+              run: composer install --no-interaction
+
+            - name: Chesk code style
+              run: vendor/bin/php-cs-fixer fix --dry-run --no-interaction
+
+            - name: Run static analysis
+              run: vendor/bin/phpstan analyse
