@@ -2,7 +2,8 @@
     "name": "simple-as-fuck/orm",
     "description": "Simple orm with class generation.",
     "require": {
-        "php": "^7.4"
+        "php": "^7.4",
+        "league/flysystem": "^1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.16",
