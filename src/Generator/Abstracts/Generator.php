@@ -96,7 +96,7 @@ abstract class Generator
     {
         $files = $this->generate();
 
-        if ($this->config->getValue('stupid-programmer')) {
+        if ($this->config->getValue('stupid-developer')) {
             $files[] = new GeneratedFile('Generated/.gitignore', "*\n!.gitignore\n");
         }
 

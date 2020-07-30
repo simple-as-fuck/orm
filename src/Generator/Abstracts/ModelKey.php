@@ -9,7 +9,7 @@ final class ModelKey
     private string $name;
     private string $comment;
     private string $type;
-    /** @var bool primary key property is assignable by programmer, of is loaded from persist layer */
+    /** @var bool primary key property is assignable by developer, of is loaded from persist layer */
     private bool $assignable;
 
     public function __construct(string $name, string $comment, string $type, bool $assignable)

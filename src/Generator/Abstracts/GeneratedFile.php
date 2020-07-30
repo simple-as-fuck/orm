@@ -9,7 +9,7 @@ final class GeneratedFile
     /** @var string path in filesystem where will be file saved  */
     private string $path;
     private string $content;
-    /** @var bool define if generated file is editable by programmer or updated every generation */
+    /** @var bool define if generated file is editable by developer or updated every generation */
     private bool $editable;
 
     public function __construct(string $path, string $content, bool $editable = false)
