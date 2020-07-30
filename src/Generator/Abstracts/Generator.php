@@ -11,7 +11,6 @@ use \SimpleAsFuck\Orm\Config\Abstracts\Config;
 
 abstract class Generator
 {
-    /** @var Config */
     private Config $config;
 
     public function __construct(Config $config)
@@ -22,16 +21,17 @@ abstract class Generator
     /**
      * method update all generated files
      *
+     * @param ModelStructure[] $modelsStructure
      * @throws \League\Flysystem\FileNotFoundException
      */
-    public function save(): void
+    public function save(array $modelsStructure): void
     {
         $fileSystem = $this->createFilesystem();
 
         $existingFiles = $this->loadExistingFilePaths($fileSystem);
-        $files = $this->internalGenerate();
+        $files = $this->internalGenerate($modelsStructure);
         foreach ($files as $file) {
-            if (! $file->isEditable()) {
+            if (! $file->isEditable() || ! $fileSystem->has($file->getPath())) {
                 $fileSystem->put($file->getPath(), $file->getContent());
             }
 
@@ -49,21 +49,22 @@ abstract class Generator
     /**
      * method check if all files are updated
      *
+     * @param ModelStructure[] $modelsStructure
      * @throws \Exception
      */
-    public function check(): void
+    public function check(array $modelsStructure): void
     {
         $fileSystem = $this->createFilesystem();
 
         $existingFiles = $this->loadExistingFilePaths($fileSystem);
-        $files = $this->internalGenerate();
+        $files = $this->internalGenerate($modelsStructure);
         foreach ($files as $file) {
             if (! $fileSystem->has($file->getPath())) {
-                throw new \RuntimeException('Generated file "'.$this->getOutputDir().'/'.$file->getPath().'" missing');
+                throw new \RuntimeException('Generated file "'.$this->getOutputPath().'/'.$file->getPath().'" missing');
             }
 
-            if ($fileSystem->read($file->getPath()) !== $file->getContent() && ! $file->isEditable()) {
-                throw new \RuntimeException('Generated file "'.$this->getOutputDir().'/'.$file->getPath().'" has wrong content');
+            if (! $file->isEditable() && $fileSystem->read($file->getPath()) !== $file->getContent()) {
+                throw new \RuntimeException('Generated file "'.$this->getOutputPath().'/'.$file->getPath().'" has wrong content');
             }
 
             $existingKeys = array_keys($existingFiles, $file->getPath());
@@ -75,7 +76,7 @@ abstract class Generator
         if (count($existingFiles) != 0) {
             $paths = [];
             foreach ($existingFiles as $existingFile) {
-                $paths[] = $this->getOutputDir().'/'.$existingFile;
+                $paths[] = $this->getOutputPath().'/'.$existingFile;
             }
 
             throw new \RuntimeException('Output dir contains redundant files: "'.implode(', ', $paths).'"');
@@ -83,18 +84,29 @@ abstract class Generator
     }
 
     /**
+     * @param ModelStructure[] $modelsStructure
      * @return GeneratedFile[]
      */
-    abstract protected function generate(): array;
+    abstract protected function generate(array $modelsStructure): array;
 
-    abstract protected function getOutputDir(): string;
+    abstract protected function getOutputPath(): string;
+
+    protected function generatePrimaryKeyType(ModelStructure $modelStructure): string
+    {
+        if (count($modelStructure->getPrimaryKeys()) > 1) {
+            return $modelStructure->getName().'Key';
+        }
+
+        return $modelStructure->getPrimaryKeys()[array_key_first($modelStructure->getPrimaryKeys())]->getType();
+    }
 
     /**
+     * @param ModelStructure[] $modelsStructure
      * @return GeneratedFile[]
      */
-    private function internalGenerate(): array
+    private function internalGenerate(array $modelsStructure): array
     {
-        $files = $this->generate();
+        $files = $this->generate($modelsStructure);
 
         if ($this->config->getValue('stupid-developer')) {
             $files[] = new GeneratedFile('Generated/.gitignore', "*\n!.gitignore\n");
@@ -105,7 +117,7 @@ abstract class Generator
 
     private function createFilesystem(): FilesystemInterface
     {
-        $filesystem =  new Filesystem(new Local($this->getOutputDir()));
+        $filesystem =  new Filesystem(new Local($this->getOutputPath()));
         if (! $filesystem->has('Generated')) {
             $filesystem->createDir('Generated');
         }
