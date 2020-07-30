@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace SimpleAsFuck\Orm\Generator\Renderer;
 
-class BasicRenderer extends \SimpleAsFuck\Orm\Generator\Abstracts\Renderer
+use \SimpleAsFuck\Orm\Generator\Abstracts\Renderer;
+
+final class BasicRenderer extends Renderer
 {
 
     /**
