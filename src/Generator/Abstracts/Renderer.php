@@ -8,7 +8,7 @@ abstract class Renderer
 {
     /**
      * @param string $path full path in file system
-     * @param object[]|string[] $templateVariables
+     * @param object[]|string[]|bool[]|array[] $templateVariables
      */
     abstract public function renderTemplate(string $path, array $templateVariables): string;
 }
