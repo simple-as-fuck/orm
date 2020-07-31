@@ -24,12 +24,12 @@ abstract class Generator
      * @param ModelStructure[] $modelsStructure
      * @throws \League\Flysystem\FileNotFoundException
      */
-    public function save(array $modelsStructure): void
+    public function save(array $modelsStructure, bool $stupidDeveloper): void
     {
         $fileSystem = $this->createFilesystem();
 
         $existingFiles = $this->loadExistingFilePaths($fileSystem);
-        $files = $this->internalGenerate($modelsStructure);
+        $files = $this->internalGenerate($modelsStructure, $stupidDeveloper);
         foreach ($files as $file) {
             if (! $file->isEditable() || ! $fileSystem->has($file->getPath())) {
                 $fileSystem->put($file->getPath(), $file->getContent());
@@ -52,12 +52,12 @@ abstract class Generator
      * @param ModelStructure[] $modelsStructure
      * @throws \Exception
      */
-    public function check(array $modelsStructure): void
+    public function check(array $modelsStructure, bool $stupidDeveloper): void
     {
         $fileSystem = $this->createFilesystem();
 
         $existingFiles = $this->loadExistingFilePaths($fileSystem);
-        $files = $this->internalGenerate($modelsStructure);
+        $files = $this->internalGenerate($modelsStructure, $stupidDeveloper);
         foreach ($files as $file) {
             if (! $fileSystem->has($file->getPath())) {
                 throw new \RuntimeException('Generated file "'.$this->getOutputPath().'/'.$file->getPath().'" missing');
@@ -87,7 +87,7 @@ abstract class Generator
      * @param ModelStructure[] $modelsStructure
      * @return GeneratedFile[]
      */
-    abstract protected function generate(array $modelsStructure): array;
+    abstract protected function generate(array $modelsStructure, bool $stupidDeveloper): array;
 
     abstract protected function getOutputPath(): string;
 
@@ -104,11 +104,11 @@ abstract class Generator
      * @param ModelStructure[] $modelsStructure
      * @return GeneratedFile[]
      */
-    private function internalGenerate(array $modelsStructure): array
+    private function internalGenerate(array $modelsStructure, bool $stupidDeveloper): array
     {
-        $files = $this->generate($modelsStructure);
+        $files = $this->generate($modelsStructure, $stupidDeveloper);
 
-        if ($this->config->getValue('stupid-developer')) {
+        if ($stupidDeveloper) {
             $files[] = new GeneratedFile('Generated/.gitignore', "*\n!.gitignore\n");
         }
 

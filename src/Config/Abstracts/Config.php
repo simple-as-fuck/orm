@@ -6,8 +6,5 @@ namespace SimpleAsFuck\Orm\Config\Abstracts;
 
 abstract class Config
 {
-    /**
-     * @return string|bool|string[]
-     */
-    abstract public function getValue(string $key);
+    abstract public function getString(string $key): string;
 }
