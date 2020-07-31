@@ -7,17 +7,9 @@ namespace SimpleAsFuck\Orm\Generator\Abstracts;
 use \League\Flysystem\Adapter\Local;
 use \League\Flysystem\Filesystem;
 use \League\Flysystem\FilesystemInterface;
-use \SimpleAsFuck\Orm\Config\Abstracts\Config;
 
 abstract class Generator
 {
-    private Config $config;
-
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-    }
-
     /**
      * method update all generated files
      *
