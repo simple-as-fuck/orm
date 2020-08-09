@@ -3,6 +3,7 @@
     "description": "Simple orm with class generation.",
     "require": {
         "php": "^7.4",
+        "ext-pdo": "*",
         "league/flysystem": "^1.0"
     },
     "require-dev": {
