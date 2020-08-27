@@ -16,9 +16,12 @@ abstract class Generator
      * @param ModelStructure[] $modelsStructure
      * @throws \League\Flysystem\FileNotFoundException
      */
-    public function save(array $modelsStructure, bool $stupidDeveloper): void
+    final public function save(array $modelsStructure, bool $stupidDeveloper): void
     {
         $fileSystem = $this->createFilesystem();
+        if (! $fileSystem->has('Generated')) {
+            $fileSystem->createDir('Generated');
+        }
 
         $existingFiles = $this->loadExistingFilePaths($fileSystem);
         $files = $this->internalGenerate($modelsStructure, $stupidDeveloper);
@@ -44,7 +47,7 @@ abstract class Generator
      * @param ModelStructure[] $modelsStructure
      * @throws \Exception
      */
-    public function check(array $modelsStructure, bool $stupidDeveloper): void
+    final public function check(array $modelsStructure, bool $stupidDeveloper): void
     {
         $fileSystem = $this->createFilesystem();
 
@@ -109,12 +112,7 @@ abstract class Generator
 
     private function createFilesystem(): FilesystemInterface
     {
-        $filesystem =  new Filesystem(new Local($this->getOutputPath()));
-        if (! $filesystem->has('Generated')) {
-            $filesystem->createDir('Generated');
-        }
-
-        return $filesystem;
+        return new Filesystem(new Local($this->getOutputPath()));
     }
 
     /**
