@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SimpleAsFuck\Orm\Database\Mysql;
 
-use \SimpleAsFuck\Orm\Database\Abstracts\Result;
+use SimpleAsFuck\Orm\Database\Abstracts\Result;
 
 final class Connection extends \SimpleAsFuck\Orm\Database\Abstracts\Connection
 {

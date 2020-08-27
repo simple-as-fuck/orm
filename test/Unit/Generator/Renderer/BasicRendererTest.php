@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SimpleAsFuck\Orm\Generator\Renderer;
 
-use \PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \SimpleAsFuck\Orm\Generator\Renderer\BasicRenderer

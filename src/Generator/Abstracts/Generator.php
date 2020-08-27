@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace SimpleAsFuck\Orm\Generator\Abstracts;
 
-use \League\Flysystem\Adapter\Local;
-use \League\Flysystem\Filesystem;
-use \League\Flysystem\FilesystemInterface;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemInterface;
 
 abstract class Generator
 {
