@@ -32,6 +32,21 @@ abstract class Config
     }
 
     /**
+     * @return string[] all keys in array are strings
+     */
+    final public function getHashMapOfString(string $key): array
+    {
+        $values = $this->getArrayOfString($key);
+        foreach (array_keys($values) as $key) {
+            if (! is_string($key)) {
+                throw new \RuntimeException('Config key: "'.$key.'" array not contains all keys as string');
+            }
+        }
+
+        return $values;
+    }
+
+    /**
      * @return mixed
      */
     abstract protected function getValue(string $key);
