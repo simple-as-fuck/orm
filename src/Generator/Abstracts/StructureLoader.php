@@ -34,7 +34,7 @@ abstract class StructureLoader
 
             $simpleParams = $model->getSimpleParams();
             usort($simpleParams, function (ModelProperty $a, ModelProperty $b): int {
-                if ($a->getDefaultValue() === null && $b->getDefaultValue() !== null) {
+                if ($a->getDefaultValue() !== null && $b->getDefaultValue() === null) {
                     return 1;
                 }
 
