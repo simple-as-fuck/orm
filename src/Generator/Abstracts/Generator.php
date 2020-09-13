@@ -92,7 +92,7 @@ abstract class Generator
             return $modelStructure->getName().'Key';
         }
 
-        return $modelStructure->getPrimaryKeys()[array_key_first($modelStructure->getPrimaryKeys())]->getType();
+        return '\\'.$modelStructure->getPrimaryKeys()[array_key_first($modelStructure->getPrimaryKeys())]->getType();
     }
 
     /**
