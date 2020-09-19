@@ -21,14 +21,20 @@ abstract class StructureLoader
                 throw new \LogicException('For model: "'.$model->getName().'" are primaryKeys empty. All models must have one or more property as primary (unique) key!');
             }
 
-            $notAssignableKeys = 0;
+            $primaryKeys = [];
+            $notAssignableKeys = [];
             foreach ($model->getPrimaryKeys() as $primaryKey) {
                 if (! $primaryKey->isAssignable()) {
-                    $notAssignableKeys++;
+                    $notAssignableKeys[] = $primaryKey;
+                    continue;
                 }
+
+                $primaryKeys[] = $primaryKey;
             }
 
-            if ($notAssignableKeys > 1) {
+            $primaryKeys = array_merge($primaryKeys, $notAssignableKeys);
+
+            if (count($notAssignableKeys) > 1) {
                 throw new \LogicException('Model: "'.$model->getName().'" has to many not assignable primaryKeys. Maximum of loaded primary keys from persist layer is one!');
             }
 
@@ -41,7 +47,7 @@ abstract class StructureLoader
                 return -1;
             });
 
-            $checkedModels[] = new ModelStructure($model->getName(), $model->getComment(), $model->getPrimaryKeys(), $model->getAdditionalKeys(), $simpleParams);
+            $checkedModels[] = new ModelStructure($model->getName(), $model->getComment(), $primaryKeys, $model->getAdditionalKeys(), $simpleParams);
         }
 
         return $checkedModels;
