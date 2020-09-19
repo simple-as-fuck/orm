@@ -38,14 +38,28 @@ abstract class StructureLoader
                 throw new \LogicException('Model: "'.$model->getName().'" has to many not assignable primaryKeys. Maximum of loaded primary keys from persist layer is one!');
             }
 
-            $simpleParams = $model->getSimpleParams();
-            usort($simpleParams, function (ModelProperty $a, ModelProperty $b): int {
-                if ($a->getDefaultValue() !== null && $b->getDefaultValue() === null) {
-                    return 1;
+            foreach ($model->getAdditionalKeys() as $modelProperty) {
+                if ($modelProperty->getName() === 'primaryKey') {
+                    throw new \LogicException('Model: "'.$model->getName().'" can not have additional key named: "primaryKey"!');
+                }
+            }
+
+            $simpleParams = [];
+            $nullableParams = [];
+            foreach ($model->getSimpleParams() as $modelProperty) {
+                if ($modelProperty->getName() === 'primaryKey') {
+                    throw new \LogicException('Model: "'.$model->getName().'" can not have simple param named: "primaryKey"!');
                 }
 
-                return -1;
-            });
+                if ($modelProperty->getDefaultValue() === null) {
+                    $simpleParams[] = $modelProperty;
+                    continue;
+                }
+
+                $nullableParams[] = $modelProperty;
+            }
+
+            $simpleParams = array_merge($simpleParams, $nullableParams);
 
             $checkedModels[] = new ModelStructure($model->getName(), $model->getComment(), $primaryKeys, $model->getAdditionalKeys(), $simpleParams);
         }
