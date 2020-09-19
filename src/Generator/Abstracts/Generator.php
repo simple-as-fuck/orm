@@ -89,10 +89,15 @@ abstract class Generator
     protected function generatePrimaryKeyType(ModelStructure $modelStructure): string
     {
         if (count($modelStructure->getPrimaryKeys()) > 1) {
-            return $modelStructure->getName().'Key';
+            return $modelStructure->getName().'PrimaryKey';
         }
 
-        return '\\'.$modelStructure->getPrimaryKeys()[array_key_first($modelStructure->getPrimaryKeys())]->getType();
+        $type =  $modelStructure->getPrimaryKeys()[array_key_first($modelStructure->getPrimaryKeys())]->getType();
+        if (class_exists($type)) {
+            return "\\".$type;
+        }
+
+        return $type;
     }
 
     /**
