@@ -62,4 +62,12 @@ final class ModelStructure
     {
         return $this->simpleParams;
     }
+
+    /**
+     * @return ModelProperty[]
+     */
+    public function getProperties(): array
+    {
+        return array_merge($this->additionalKeys, $this->simpleParams);
+    }
 }
