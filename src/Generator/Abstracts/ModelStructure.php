@@ -8,7 +8,7 @@ final class ModelStructure
 {
     private string $name;
     private string $comment;
-    /** @var ModelKey[] array of model properties identify one unique instance */
+    /** @var ModelProperty[] array of model properties identify one unique instance */
     private array $primaryKeys;
     /** @var ModelProperty[] array of model properties for frequently selecting from database */
     private array $additionalKeys;
@@ -16,7 +16,7 @@ final class ModelStructure
     private array $simpleParams;
 
     /**
-     * @param ModelKey[] $primaryKeys
+     * @param ModelProperty[] $primaryKeys
      * @param ModelProperty[] $additionalKeys
      * @param ModelProperty[] $simpleParams
      */
@@ -40,7 +40,7 @@ final class ModelStructure
     }
 
     /**
-     * @return ModelKey[]
+     * @return ModelProperty[]
      */
     public function getPrimaryKeys(): array
     {
@@ -68,6 +68,6 @@ final class ModelStructure
      */
     public function getProperties(): array
     {
-        return array_merge($this->additionalKeys, $this->simpleParams);
+        return array_merge($this->primaryKeys, $this->additionalKeys, $this->simpleParams);
     }
 }

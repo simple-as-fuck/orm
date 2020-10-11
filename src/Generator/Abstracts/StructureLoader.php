@@ -45,21 +45,17 @@ abstract class StructureLoader
             }
 
             $simpleParams = [];
-            $nullableParams = [];
+            $paramsWithDefaultValues = [];
             foreach ($model->getSimpleParams() as $modelProperty) {
-                if ($modelProperty->getName() === 'primaryKey') {
-                    throw new \LogicException('Model: "'.$model->getName().'" can not have simple param named: "primaryKey"!');
-                }
-
                 if ($modelProperty->getDefaultValue() === null) {
                     $simpleParams[] = $modelProperty;
                     continue;
                 }
 
-                $nullableParams[] = $modelProperty;
+                $paramsWithDefaultValues[] = $modelProperty;
             }
 
-            $simpleParams = array_merge($simpleParams, $nullableParams);
+            $simpleParams = array_merge($simpleParams, $paramsWithDefaultValues);
 
             $checkedModels[] = new ModelStructure($model->getName(), $model->getComment(), $primaryKeys, $model->getAdditionalKeys(), $simpleParams);
         }
