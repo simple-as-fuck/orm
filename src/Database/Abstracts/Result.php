@@ -13,6 +13,11 @@ abstract class Result
     abstract public function fetch(): ?\stdClass;
 
     /**
+     * return last auto incremented value after insert
+     */
+    abstract public function lastInsertedId(): ?string;
+
+    /**
      * fetch all rows from query result represented by an array of object
      *
      * @return \stdClass[]
