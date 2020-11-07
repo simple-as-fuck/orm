@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
     ci:
         runs-on: ubuntu-latest
-        container: "composer:1.10"
+        container: "composer:2.0"
         steps:
             - name: Checkout repository
               uses: actions/checkout@v2
