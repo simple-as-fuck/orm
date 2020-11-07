@@ -6,6 +6,16 @@ namespace SimpleAsFuck\Orm\Config\Abstracts;
 
 abstract class Config
 {
+    final public function getInt(string $key): int
+    {
+        $value = $this->getValue($key);
+        if (! is_int($value)) {
+            throw new \RuntimeException('Config key: "'.$key.'" is not int');
+        }
+
+        return $value;
+    }
+
     final public function getString(string $key): string
     {
         $value = $this->getValue($key);
