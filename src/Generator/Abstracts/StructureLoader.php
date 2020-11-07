@@ -4,8 +4,18 @@ declare(strict_types=1);
 
 namespace SimpleAsFuck\Orm\Generator\Abstracts;
 
+use SimpleAsFuck\Orm\Config\Abstracts\Config;
+
 abstract class StructureLoader
 {
+    /** @var Config */
+    private Config $config;
+
+    public function __construct(Config $config)
+    {
+        $this->config = $config;
+    }
+
     /**
      * method load structure for all models from some source
      *
@@ -69,4 +79,20 @@ abstract class StructureLoader
      * @return ModelStructure[]
      */
     abstract protected function loadStructure(): array;
+
+    final protected function convertType(string $table, string $column, string $type): string
+    {
+        $typeMaps = [];
+        $typeMaps[$table.'.'.$column] = $this->config->getHashMapOfString('database-table-map');
+        $typeMaps[$column] = $this->config->getHashMapOfString('database-column-map');
+        $typeMaps[$type] = $this->config->getHashMapOfString('database-type-map');
+
+        foreach ($typeMaps as $searchKey => $typeMap) {
+            if (array_key_exists($searchKey, $typeMap)) {
+                return $typeMap[$searchKey];
+            }
+        }
+
+        return 'string';
+    }
 }
