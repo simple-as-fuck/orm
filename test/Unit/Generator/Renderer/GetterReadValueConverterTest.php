@@ -28,6 +28,9 @@ final class GetterReadValueConverterTest extends TestCase
         static::assertSame($expectedValue, $convertedValue);
     }
 
+    /**
+     * @return array[]
+     */
     public function dataProviderConvert(): array
     {
         return [
