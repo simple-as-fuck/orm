@@ -16,7 +16,7 @@ abstract class Generator
      * @param ModelStructure[] $modelsStructure
      * @throws \League\Flysystem\FileNotFoundException
      */
-    final public function save(array $modelsStructure, bool $stupidDeveloper): void
+    final public function generate(array $modelsStructure, bool $stupidDeveloper): void
     {
         $fileSystem = $this->createFilesystem();
         if (! $fileSystem->has('Generated')) {
@@ -24,7 +24,7 @@ abstract class Generator
         }
 
         $existingFiles = $this->loadExistingFilePaths($fileSystem);
-        $files = $this->internalGenerate($modelsStructure, $stupidDeveloper);
+        $files = $this->internalCreateFiles($modelsStructure, $stupidDeveloper);
         foreach ($files as $file) {
             if (! $file->isEditable() || ! $fileSystem->has($file->getPath())) {
                 $fileSystem->put($file->getPath(), $file->getContent());
@@ -52,7 +52,7 @@ abstract class Generator
         $fileSystem = $this->createFilesystem();
 
         $existingFiles = $this->loadExistingFilePaths($fileSystem);
-        $files = $this->internalGenerate($modelsStructure, $stupidDeveloper);
+        $files = $this->internalCreateFiles($modelsStructure, $stupidDeveloper);
         foreach ($files as $file) {
             if (! $fileSystem->has($file->getPath())) {
                 throw new \RuntimeException('Generated file "'.$this->getOutputPath().'/'.$file->getPath().'" missing');
@@ -82,31 +82,17 @@ abstract class Generator
      * @param ModelStructure[] $modelsStructure
      * @return GeneratedFile[]
      */
-    abstract protected function generate(array $modelsStructure, bool $stupidDeveloper): array;
+    abstract protected function createFiles(array $modelsStructure, bool $stupidDeveloper): array;
 
     abstract protected function getOutputPath(): string;
-
-    protected function generatePrimaryKeyType(ModelStructure $modelStructure): string
-    {
-        if (count($modelStructure->getPrimaryKeys()) > 1) {
-            return $modelStructure->getName().'PrimaryKey';
-        }
-
-        $type =  $modelStructure->getPrimaryKeys()[array_key_first($modelStructure->getPrimaryKeys())]->getType();
-        if (class_exists($type)) {
-            return "\\".$type;
-        }
-
-        return $type;
-    }
 
     /**
      * @param ModelStructure[] $modelsStructure
      * @return GeneratedFile[]
      */
-    private function internalGenerate(array $modelsStructure, bool $stupidDeveloper): array
+    private function internalCreateFiles(array $modelsStructure, bool $stupidDeveloper): array
     {
-        $files = $this->generate($modelsStructure, $stupidDeveloper);
+        $files = $this->createFiles($modelsStructure, $stupidDeveloper);
 
         if ($stupidDeveloper) {
             $files[] = new GeneratedFile('Generated/.gitignore', "*\n!.gitignore\n");
