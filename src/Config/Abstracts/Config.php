@@ -27,14 +27,27 @@ abstract class Config
     }
 
     /**
-     * @return string[]
+     * @return mixed[]
      */
-    final public function getArrayOfString(string $key): array
+    final public function getArray(string $key): array
+    {
+        $value = $this->getValue($key);
+        if (! is_array($value)) {
+            throw new \RuntimeException('Config key: "'.$key.'" is not array');
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return mixed[] all keys in array are strings
+     */
+    final public function getMap(string $key): array
     {
         $values = $this->getArray($key);
-        foreach ($values as $value) {
-            if (! is_string($value)) {
-                throw new \RuntimeException('Config key: "'.$key.'" is not array of string');
+        foreach (array_keys($values) as $arrayKey) {
+            if (! is_string($arrayKey)) {
+                throw new \RuntimeException('Config key: "'.$key.'" array not contains all keys as string');
             }
         }
 
@@ -42,17 +55,22 @@ abstract class Config
     }
 
     /**
+     * @return string[]
+     */
+    final public function getArrayOfString(string $key): array
+    {
+        $values = $this->getArray($key);
+        $this->checkArrayOfString($key, $values);
+        return $values;
+    }
+
+    /**
      * @return string[] all keys in array are strings
      */
-    final public function getHashMapOfString(string $key): array
+    final public function getMapOfString(string $key): array
     {
-        $values = $this->getArrayOfString($key);
-        foreach (array_keys($values) as $key) {
-            if (! is_string($key)) {
-                throw new \RuntimeException('Config key: "'.$key.'" array not contains all keys as string');
-            }
-        }
-
+        $values = $this->getMap($key);
+        $this->checkArrayOfString($key, $values);
         return $values;
     }
 
@@ -62,15 +80,14 @@ abstract class Config
     abstract protected function getValue(string $key);
 
     /**
-     * @return mixed[]
+     * @param mixed[] $values
      */
-    final private function getArray(string $key): array
+    private function checkArrayOfString(string $key, array $values): void
     {
-        $value = $this->getValue($key);
-        if (! is_array($value)) {
-            throw new \RuntimeException('Config key: "'.$key.'" is not array');
+        foreach ($values as $value) {
+            if (! is_string($value)) {
+                throw new \RuntimeException('Config key: "'.$key.'" array not contains all values as string');
+            }
         }
-
-        return $value;
     }
 }
