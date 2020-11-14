@@ -11,23 +11,21 @@ final class ModelProperty
     private bool $nullable;
     /** @var bool primary key property is assignable by developer, of is loaded from persist layer */
     private bool $assignable;
-    /** @var string small code used while code generation, define how is property read from model into database query (often property name) */
-    private string $readConversionCode;
-    /** @var string small code used while code generation, define how is property write from database into model (often property name) */
-    private string $writeConversionCode;
     private string $type;
+    private ?TypeTemplates $typeTemplates;
     private ?string $defaultValue;
+    private Renderer $renderer;
 
-    public function __construct(string $name, string $comment, bool $nullable, bool $assignable, string $readConversionCode, string $writeConversionCode, string $type, ?string $defaultValue)
+    public function __construct(string $name, string $comment, bool $nullable, bool $assignable, string $type, ?TypeTemplates $typeTemplates, ?string $defaultValue, Renderer $renderer)
     {
         $this->name = $name;
         $this->comment = $comment;
         $this->nullable = $nullable;
         $this->assignable = $assignable;
-        $this->readConversionCode = $readConversionCode;
-        $this->writeConversionCode = $writeConversionCode;
         $this->type = $type;
+        $this->typeTemplates = $typeTemplates;
         $this->defaultValue = $defaultValue;
+        $this->renderer = $renderer;
     }
 
     public function getName(): string
@@ -50,14 +48,28 @@ final class ModelProperty
         return $this->assignable;
     }
 
-    public function getReadConversionCode(): string
+    /**
+     * method finalize conversion code how is value read from php variable into db
+     */
+    public function renderReadCode(string $variableName): string
     {
-        return $this->readConversionCode;
+        if (! $this->typeTemplates) {
+            return $variableName;
+        }
+
+        return $this->renderer->renderTemplate($this->typeTemplates->getReadValueTemplate(), ['variableName' => $variableName]);
     }
 
-    public function getWriteConversionCode(): string
+    /**
+     * method finalize conversion code how is value written into php variable from db
+     */
+    public function renderWriteCode(string $variableName): string
     {
-        return $this->writeConversionCode;
+        if (! $this->typeTemplates) {
+            return $variableName;
+        }
+
+        return $this->renderer->renderTemplate($this->typeTemplates->getWriteValueTemplate(), ['variableName' => $variableName]);
     }
 
     public function getType(): string

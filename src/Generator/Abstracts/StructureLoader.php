@@ -100,4 +100,15 @@ abstract class StructureLoader
 
         return 'string';
     }
+
+    final protected function makeModelProperty(string $name, string $comment, bool $nullable, bool $assignable, string $type, ?string $defaultValue): ModelProperty
+    {
+        $typeMap = $this->config->getMap('custom-type-templates');
+        $typeTemplates = null;
+        if (array_key_exists($type, $typeMap)) {
+            $typeTemplates = new TypeTemplates($type, $typeMap[$type]['read'], $typeMap[$type]['write']);
+        }
+
+        return new ModelProperty($name, $comment, $nullable, $assignable, $type, $typeTemplates, $defaultValue, $this->renderer);
+    }
 }

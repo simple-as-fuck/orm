@@ -24,6 +24,18 @@ final class Config extends \SimpleAsFuck\Orm\Config\Abstracts\Config
         // if you do not like generated classes, you can change them because of your code style or whatever
         'repository-template-path' => __DIR__.'/../../Generator/Template/Repository.php',
         'repository-generated-template-path' => __DIR__.'/../../Generator/Template/RepositoryGenerated.php',
+        /* configuration for custom type generation */
+        'custom-type-templates' => [
+            // every not primitive type must have templates for small part of code rendering
+            \DateTimeImmutable::class => [
+                // read template render small code how is property read from custom type into database
+                // mainly some getter called on instance of custom type
+                'read' => __DIR__.'/../../Generator/Template/DateTimeReadValue.php',
+                // write template render how is custom type create from primitive type loaded from database
+                // mainly call of constructor value object
+                'write' => __DIR__.'/../../Generator/Template/DateTimeImmutableWriteValue.php',
+            ],
+        ],
         /* configuration for structure loading from database */
         // if database type is not found in any map (type, column, table) string type is used as default
         // this map define how database types in all tables are converted into php types
