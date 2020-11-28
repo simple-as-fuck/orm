@@ -5,13 +5,22 @@ on: [push, pull_request]
 jobs:
     ci:
         runs-on: ubuntu-latest
-        container: "composer:2.0"
+        container: "nofutur3/php-tests:7.4"
+        services:
+            database:
+                image: "mysql:5.7"
+                env:
+                    MYSQL_ROOT_PASSWORD: password
+                    MYSQL_DATABASE: database
         steps:
             - name: Checkout repository
               uses: actions/checkout@v2
 
             - name: Install dependencies
               run: composer install --no-interaction
+
+            - name: Prepare database
+              run: php test/Integration/Generator/TestMysqlTables.php
 
             - name: Chesk code style
               run: vendor/bin/php-cs-fixer fix --dry-run --no-interaction
