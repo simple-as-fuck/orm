@@ -78,9 +78,9 @@ abstract class Generator
 
     /**
      * @param ModelStructure[] $modelsStructure
-     * @return GeneratedFile[]
+     * @return GeneratedDirectory[]
      */
-    abstract protected function createFiles(array $modelsStructure, bool $stupidDeveloper): array;
+    abstract protected function createClasses(array $modelsStructure, bool $stupidDeveloper): array;
 
     abstract protected function getOutputPath(): string;
 
