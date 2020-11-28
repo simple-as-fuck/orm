@@ -38,9 +38,7 @@ final class Mysql extends StructureLoader
             where
                 TABLE_SCHEMA = :databaseName
                 and
-                TABLE_TYPE = 'BASE TABLE' 
-                and
-                TEMPORARY = 'N'
+                TABLE_TYPE = 'BASE TABLE'
                 and
                 TABLE_NAME not in (:ignoredTables)
         ", [
