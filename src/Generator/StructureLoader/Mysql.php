@@ -94,7 +94,7 @@ final class Mysql extends StructureLoader
                     $column->IS_NULLABLE === 'YES',
                     true,
                     $propertyType,
-                    $this->convertDefaultValue($propertyType, $column->COLUMN_DEFAULT)
+                    $this->convertDefaultValue($propertyType, $column->COLUMN_DEFAULT, $column->IS_NULLABLE === 'YES')
                 );
 
                 if ($column->COLUMN_KEY !== '') {
@@ -115,9 +115,13 @@ final class Mysql extends StructureLoader
         return $modelsStructure;
     }
 
-    private function convertDefaultValue(string $type, ?string $value): ?string
+    private function convertDefaultValue(string $type, ?string $value, bool $isNullable): ?string
     {
         if ($value === null) {
+            if ($isNullable) {
+                return 'null';
+            }
+
             return null;
         }
 
