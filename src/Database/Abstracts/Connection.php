@@ -6,6 +6,13 @@ namespace SimpleAsFuck\Orm\Database\Abstracts;
 
 abstract class Connection
 {
+    private Transaction $transaction;
+
+    public function __construct()
+    {
+        $this->transaction = new NoTransaction();
+    }
+
     /**
      * send one query into database and return result, which can be fetch
      *
@@ -21,8 +28,15 @@ abstract class Connection
      */
     abstract public function prepare(string $statement): Query;
 
-    abstract public function beginTransaction(): void;
-    abstract public function commitTransaction(): void;
-    abstract public function rollbackTransaction(): void;
-    abstract public function inTransaction(): bool;
+    final public function beginTransaction(): Transaction
+    {
+        if ($this->transaction->isActive()) {
+            return new NoTransaction();
+        }
+
+        $this->transaction = $this->createTransaction();
+        return $this->transaction;
+    }
+
+    abstract protected function createTransaction(): Transaction;
 }

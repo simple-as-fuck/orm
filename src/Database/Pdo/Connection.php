@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SimpleAsFuck\Orm\Database\Pdo;
 
 use SimpleAsFuck\Orm\Database\Abstracts\Query;
+use SimpleAsFuck\Orm\Database\Abstracts\Transaction;
 
 class Connection extends \SimpleAsFuck\Orm\Database\Abstracts\Connection
 {
@@ -12,6 +13,8 @@ class Connection extends \SimpleAsFuck\Orm\Database\Abstracts\Connection
 
     public function __construct(\PDO $pdo)
     {
+        parent::__construct();
+
         $this->pdo = $pdo;
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this->pdo->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_NATURAL);
@@ -26,31 +29,12 @@ class Connection extends \SimpleAsFuck\Orm\Database\Abstracts\Connection
         return new \SimpleAsFuck\Orm\Database\Pdo\Query($this->pdo, $statement);
     }
 
-    final public function beginTransaction(): void
+    final protected function createTransaction(): Transaction
     {
-        if ($this->inTransaction()) {
-            return;
+        if (! $this->pdo->inTransaction()) {
+            $this->pdo->beginTransaction();
         }
 
-        $this->pdo->beginTransaction();
-    }
-
-    final public function commitTransaction(): void
-    {
-        if ($this->inTransaction()) {
-            $this->pdo->commit();
-        }
-    }
-
-    final public function rollbackTransaction(): void
-    {
-        if ($this->inTransaction()) {
-            $this->pdo->rollBack();
-        }
-    }
-
-    final public function inTransaction(): bool
-    {
-        return $this->pdo->inTransaction();
+        return new \SimpleAsFuck\Orm\Database\Pdo\Transaction($this->pdo);
     }
 }
