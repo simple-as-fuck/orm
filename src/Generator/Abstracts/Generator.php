@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace SimpleAsFuck\Orm\Generator\Abstracts;
 
-use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\FilesystemReader;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\Flysystem\StorageAttributes;
 
 abstract class Generator
 {
@@ -14,20 +16,16 @@ abstract class Generator
      * method update all generated files
      *
      * @param ModelStructure[] $modelsStructure
-     * @throws \League\Flysystem\FileNotFoundException
      */
     final public function generate(array $modelsStructure, bool $stupidDeveloper): void
     {
         $fileSystem = $this->createFilesystem();
-        if (! $fileSystem->has('Generated')) {
-            $fileSystem->createDir('Generated');
-        }
 
         $existingFiles = $this->loadExistingFilePaths($fileSystem);
         $files = $this->internalCreateFiles($modelsStructure, $stupidDeveloper);
         foreach ($files as $file) {
-            if (! $file->isEditable() || ! $fileSystem->has($file->getPath())) {
-                $fileSystem->put($file->getPath(), $file->getContent());
+            if (! $file->isEditable() || ! $fileSystem->fileExists($file->getPath())) {
+                $fileSystem->write($file->getPath(), $file->getContent());
             }
 
             $existingKeys = array_keys($existingFiles, $file->getPath());
@@ -45,7 +43,7 @@ abstract class Generator
      * method check if all files are updated
      *
      * @param ModelStructure[] $modelsStructure
-     * @throws \Exception
+     * @throws \RuntimeException
      */
     final public function check(array $modelsStructure, bool $stupidDeveloper): void
     {
@@ -54,7 +52,7 @@ abstract class Generator
         $existingFiles = $this->loadExistingFilePaths($fileSystem);
         $files = $this->internalCreateFiles($modelsStructure, $stupidDeveloper);
         foreach ($files as $file) {
-            if (! $fileSystem->has($file->getPath())) {
+            if (! $fileSystem->fileExists($file->getPath())) {
                 throw new \RuntimeException('Generated file "'.$this->getOutputPath().'/'.$file->getPath().'" missing');
             }
 
@@ -101,26 +99,21 @@ abstract class Generator
         return $files;
     }
 
-    private function createFilesystem(): FilesystemInterface
+    private function createFilesystem(): FilesystemOperator
     {
-        return new Filesystem(new Local($this->getOutputPath()));
+        return new Filesystem(new LocalFilesystemAdapter($this->getOutputPath()));
     }
 
     /**
      * @return string[]
      */
-    private function loadExistingFilePaths(FilesystemInterface $filesystem): array
+    private function loadExistingFilePaths(FilesystemReader $filesystem): array
     {
-        $paths = [];
-        $contents = $filesystem->listContents('', true);
-        foreach ($contents as $content) {
-            if ($content['type'] !== 'file') {
-                continue;
-            }
-
-            $paths[] = $content['path'];
-        }
-
-        return $paths;
+        return $filesystem
+            ->listContents('', true)
+            ->filter(fn (StorageAttributes $attributes): bool => $attributes->isFile())
+            ->map(fn (StorageAttributes $attributes): string => $attributes->path())
+            ->toArray()
+        ;
     }
 }
