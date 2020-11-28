@@ -13,6 +13,11 @@ class Connection extends \SimpleAsFuck\Orm\Database\Abstracts\Connection
     public function __construct(\PDO $pdo)
     {
         $this->pdo = $pdo;
+        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->pdo->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_NATURAL);
+        $this->pdo->setAttribute(\PDO::ATTR_ORACLE_NULLS, \PDO::NULL_NATURAL);
+        $this->pdo->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, false);
+        $this->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
     }
 
     final public function prepare(string $statement): Query
