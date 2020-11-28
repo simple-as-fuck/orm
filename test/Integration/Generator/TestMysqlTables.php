@@ -15,7 +15,7 @@ $connection->query('
         `string` varchar(255) not null,
         createdAt datetime not null,
         timeAt datetime default null,
-        deletedAt varchar(255) default null,
+        deletedAt varchar(255) null default null,
         `float` float not null default 0.0,
         primary key (id),
         index timeAtIndex (timeAt)
@@ -36,7 +36,7 @@ $connection->query("
         `date` date not null,
         customType varchar(255) not null,
         anotherId int unsigned default null,
-        deletedAt varchar(255) default null,
+        deletedAt varchar(255) null default null,
         `value` decimal(10,2) not null default '0.0',
         primary key (id, date),
         index anotherIdIndex (anotherId)
