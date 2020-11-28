@@ -14,5 +14,21 @@
     },
     "autoload": {
         "psr-4": {"SimpleAsFuck\\Orm\\": "src/"}
+    },
+    "autoload-dev": {
+        "psr-4": {"App\\": "src/"}
+    },
+    "scripts": {
+        "test:orm:generate": "SimpleAsFuck\\Orm\\Generator\\Command\\Composer::mysqlGenerate",
+        "test:orm:check": "SimpleAsFuck\\Orm\\Generator\\Command\\Composer::mysqlCheck"
+    },
+    "extra": {
+        "orm-generator-config": {
+            "database-column-map": {"deletedAt": "DateTimeImmutable"},
+            "database-table-map": {"TestMultiplePrimaryKey.customType": "DateTimeImmutable"},
+            "database-ignored-tables": ["TestIgnoredTable"],
+            "mysql-host": "database",
+            "mysql-password": "password"
+        }
     }
 }

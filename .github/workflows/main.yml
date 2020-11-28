@@ -22,6 +22,12 @@ jobs:
             - name: Prepare database
               run: php test/Integration/Generator/TestMysqlTables.php
 
+            - name: Generate test classis
+              run: composer test:orm:generate
+
+            - name: Check genarated test classis
+              run: composer test:orm:check
+
             - name: Chesk code style
               run: vendor/bin/php-cs-fixer fix --dry-run --no-interaction
 
