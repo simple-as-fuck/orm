@@ -1,2 +1,4 @@
+src/Model
+src/Service
 vendor
 composer.lock
