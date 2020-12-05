@@ -66,7 +66,7 @@ final class Generator
     /**
      * method load stricture and use generators for update all files
      */
-    public function generate(bool $stupidDeveloper): void
+    public function generate(bool $stupidDeveloper = true): void
     {
         $modelsStructure = $this->structureLoader->loadModels();
 
@@ -81,7 +81,7 @@ final class Generator
      *
      * @throws \RuntimeException
      */
-    public function check(bool $stupidDeveloper): void
+    public function check(bool $stupidDeveloper = true): void
     {
         $modelsStructure = $this->structureLoader->loadModels();
 
