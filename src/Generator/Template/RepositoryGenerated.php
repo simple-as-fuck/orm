@@ -23,7 +23,6 @@ namespace <?= $repositoryNamespace ?>;
 use <?= $modelNamespace.'\\'.$modelStructure->getName() ?>;
 use <?= $modelNamespace.'\\Generated\\'.$modelStructure->getName() ?>Result;
 use SimpleAsFuck\Orm\Database\Abstracts\Connection;
-use SimpleAsFuck\Orm\Database\Abstracts\Result;
 
 <?php
 
@@ -57,7 +56,7 @@ abstract class <?= $modelStructure->getName() ?>Repository
 ?>
     final public function selectByPrimaryKey(<?= implode(', ', $primaryKeyParams) ?>): ?<?= $modelStructure->getName()."\n" ?>
     {
-        $result = $this->rawQuery('select * from `<?= $modelStructure->getName() ?>` where <?= implode(' and ', $wherePrimaryKeys) ?>', [<?= implode(', ', $selectProperties) ?>]);
+        $result = $this->connection->query('select * from `<?= $modelStructure->getName() ?>` where <?= implode(' and ', $wherePrimaryKeys) ?>', [<?= implode(', ', $selectProperties) ?>]);
         $result = new <?= $modelStructure->getName() ?>Result($result);
         return $result->fetch();
     }
@@ -71,14 +70,14 @@ abstract class <?= $modelStructure->getName() ?>Repository
         if ($additionalKey->isNullable()) {
             echo
 '        if ($'.$additionalKey->getName()." === null) {\n".
-"            \$result = \$this->rawQuery('select * from `".$modelStructure->getName()."` where `".$additionalKey->getName()."` is null', []);\n".
+"            \$result = \$this->connection->query('select * from `".$modelStructure->getName()."` where `".$additionalKey->getName()."` is null', []);\n".
 "        } else {\n".
-"            \$result = \$this->rawQuery('select * from `".$modelStructure->getName()."` where `".$additionalKey->getName()."` = ?', [\$" . $additionalKey->renderReadCode($additionalKey->getName())."]);\n".
+"            \$result = \$this->connection->query('select * from `".$modelStructure->getName()."` where `".$additionalKey->getName()."` = ?', [\$" . $additionalKey->renderReadCode($additionalKey->getName())."]);\n".
 "        }\n"
             ;
         } else {
             echo
-"        \$result = \$this->rawQuery('select * from `".$modelStructure->getName()."` where `".$additionalKey->getName()."` = ?', [\$" . $additionalKey->renderReadCode($additionalKey->getName())."]);\n"
+"        \$result = \$this->connection->query('select * from `".$modelStructure->getName()."` where `".$additionalKey->getName()."` = ?', [\$" . $additionalKey->renderReadCode($additionalKey->getName())."]);\n"
             ;
         }
         echo
@@ -306,24 +305,12 @@ foreach (array_merge($modelStructure->getAdditionalKeys(), $modelStructure->getS
         ;
     }
 ?>
-        $result = $this->rawQuery($statement, $inputParameters);
+        $result = $this->connection->query($statement, $inputParameters);
         return new <?= $modelStructure->getName() ?>Result($result);
     }
 
-    /**
-     * @param string[]|int[]|float[]|null[] $inputParameters
-     */
-    final protected function rawQuery(string $statement, array $inputParameters): Result
+    final protected function connection(): Connection
     {
-<?php
-if ($stupidDeveloper) {
-    echo
-"        if (preg_match('/^\\s*select\\s+".$modelStructure->getName()."\\.\\*\\s+from\\s+".$modelStructure->getName()."/ui', \$statement)) {\n".
-"            throw new \\LogicException('For statement: '.\$statement.' selecting full instance is dedicated method: Repository::select');\n".
-"        }\n\n"
-    ;
-}
-?>
-        return $this->connection->query($statement, $inputParameters);
+        return $this->connection;
     }
 }
