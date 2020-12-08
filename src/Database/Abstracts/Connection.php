@@ -6,7 +6,7 @@ namespace SimpleAsFuck\Orm\Database\Abstracts;
 
 abstract class Connection
 {
-    private Transaction $transaction;
+    private NoTransaction $transaction;
 
     public function __construct()
     {
@@ -31,11 +31,12 @@ abstract class Connection
     final public function beginTransaction(): Transaction
     {
         if ($this->transaction->isActive()) {
-            return new NoTransaction();
+            return $this->transaction;
         }
 
-        $this->transaction = $this->createTransaction();
-        return $this->transaction;
+        $transaction = $this->createTransaction();
+        $this->transaction = new NoTransaction($transaction);
+        return $transaction;
     }
 
     abstract protected function createTransaction(): Transaction;
