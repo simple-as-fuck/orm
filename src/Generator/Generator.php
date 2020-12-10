@@ -66,9 +66,9 @@ final class Generator
     /**
      * method load stricture and use generators for update all files
      */
-    public function generate(bool $stupidDeveloper = true): void
+    public function generate(bool $stupidDeveloper = true, ?string $databaseName = null): void
     {
-        $modelsStructure = $this->structureLoader->loadModels();
+        $modelsStructure = $this->structureLoader->loadModels($databaseName);
 
         $directoriesContent = $this->directoryGenerator->create($modelsStructure, $stupidDeveloper);
         foreach ($directoriesContent as $directoryContent) {
@@ -81,9 +81,9 @@ final class Generator
      *
      * @throws \RuntimeException
      */
-    public function check(bool $stupidDeveloper = true): void
+    public function check(bool $stupidDeveloper = true, ?string $databaseName = null): void
     {
-        $modelsStructure = $this->structureLoader->loadModels();
+        $modelsStructure = $this->structureLoader->loadModels($databaseName);
 
         $directoriesContent = $this->directoryGenerator->create($modelsStructure, $stupidDeveloper);
         foreach ($directoriesContent as $directoryContent) {

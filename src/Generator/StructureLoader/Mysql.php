@@ -28,8 +28,9 @@ final class Mysql extends StructureLoader
      *
      * @return ModelStructure[]
      */
-    public function loadStructure(): array
+    public function loadStructure(?string $databaseName = null): array
     {
+        $databaseName = $databaseName === null ? $this->config->getString('mysql-database-name') : $databaseName;
         $ignoredTables = $this->config->getArrayOfString('database-ignored-tables');
 
         $result = $this->connection->query("
@@ -42,7 +43,7 @@ final class Mysql extends StructureLoader
                 and
                 TABLE_NAME not in (:ignoredTables)
         ", [
-            ':databaseName' => $this->config->getString('mysql-database-name'),
+            ':databaseName' => $databaseName,
             ':ignoredTables' => implode(',', $ignoredTables),
         ]);
 
@@ -64,7 +65,7 @@ final class Mysql extends StructureLoader
                 order by
                     ORDINAL_POSITION
             ", [
-                ':databaseName' => $this->config->getString('mysql-database-name'),
+                ':databaseName' => $databaseName,
                 ':tableName' => $tableStructure->TABLE_NAME,
             ])->fetchAll();
 

@@ -22,9 +22,9 @@ abstract class StructureLoader
      *
      * @return ModelStructure[]
      */
-    final public function loadModels(): array
+    final public function loadModels(?string $databaseName = null): array
     {
-        $models = $this->loadStructure();
+        $models = $this->loadStructure($databaseName);
         $checkedModels = [];
 
         foreach ($models as $model) {
@@ -83,7 +83,7 @@ abstract class StructureLoader
      *
      * @return ModelStructure[]
      */
-    abstract protected function loadStructure(): array;
+    abstract protected function loadStructure(?string $databaseName = null): array;
 
     final protected function convertType(string $table, string $column, string $type): string
     {
