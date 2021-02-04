@@ -8,7 +8,6 @@ use SimpleAsFuck\Orm\Generator\Abstracts\Renderer;
 
 final class BasicRenderer extends Renderer
 {
-
     /**
      * @param string $path full path in file system
      * @param object[]|string[] $templateVariables
