@@ -15,7 +15,7 @@ jobs:
                     MYSQL_DATABASE: database
         steps:
             - name: Wait for mysql start
-              run: sleep 2
+              run: sleep 3
 
             - name: Checkout repository
               uses: actions/checkout@v2
@@ -53,7 +53,7 @@ jobs:
                     MYSQL_DATABASE: database
         steps:
             - name: Wait for mysql start
-              run: sleep 2
+              run: sleep 3
 
             - name: Checkout repository
               uses: actions/checkout@v2
