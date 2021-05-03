@@ -2,7 +2,7 @@
     "name": "simple-as-fuck/orm",
     "description": "Simple orm with class generation.",
     "require": {
-        "php": "^7.4",
+        "php": "^7.4|^8.0",
         "ext-pdo": "*",
         "league/flysystem": "^2.0",
         "composer/composer": "^2"
