@@ -4,26 +4,19 @@ declare(strict_types=1);
 
 namespace SimpleAsFuck\Orm\Config\Abstracts;
 
+use SimpleAsFuck\Validator\Factory\Validator;
+use SimpleAsFuck\Validator\Rule\ArrayRule\TypedKey;
+
 abstract class Config
 {
     final public function getInt(string $key): int
     {
-        $value = $this->getValue($key);
-        if (! is_int($value)) {
-            throw new \RuntimeException('Config key: "'.$key.'" is not int');
-        }
-
-        return $value;
+        return Validator::make($this->getValue($key))->int()->notNull();
     }
 
     final public function getString(string $key): string
     {
-        $value = $this->getValue($key);
-        if (! is_string($value)) {
-            throw new \RuntimeException('Config key: "'.$key.'" is not string');
-        }
-
-        return $value;
+        return Validator::make($this->getValue($key))->string()->notNull();
     }
 
     /**
@@ -40,38 +33,27 @@ abstract class Config
     }
 
     /**
-     * @return mixed[] all keys in array are strings
+     * @return array<string, mixed>
      */
     final public function getMap(string $key): array
     {
-        $values = $this->getArray($key);
-        foreach (array_keys($values) as $arrayKey) {
-            if (! is_string($arrayKey)) {
-                throw new \RuntimeException('Config key: "'.$key.'" array not contains all keys as string');
-            }
-        }
-
-        return $values;
+        return $this->checkArrayStringKey($key, $this->getArray($key));
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     final public function getArrayOfString(string $key): array
     {
-        $values = $this->getArray($key);
-        $this->checkArrayOfString($key, $values);
-        return $values;
+        return Validator::make($this->getValue($key))->array()->of(fn (TypedKey $key) => $key->string()->notNull())->notNull();
     }
 
     /**
-     * @return string[] all keys in array are strings
+     * @return array<string, string>
      */
     final public function getMapOfString(string $key): array
     {
-        $values = $this->getMap($key);
-        $this->checkArrayOfString($key, $values);
-        return $values;
+        return $this->checkArrayStringKey($key, $this->getArrayOfString($key));
     }
 
     /**
@@ -80,14 +62,18 @@ abstract class Config
     abstract protected function getValue(string $key);
 
     /**
-     * @param mixed[] $values
+     * @template TValue
+     * @param array<TValue> $array
+     * @return array<string, TValue>
      */
-    private function checkArrayOfString(string $key, array $values): void
+    private function checkArrayStringKey(string $key, array $array): array
     {
-        foreach ($values as $value) {
-            if (! is_string($value)) {
-                throw new \RuntimeException('Config key: "'.$key.'" array not contains all values as string');
+        foreach (array_keys($array) as $arrayKey) {
+            if (! is_string($arrayKey)) {
+                throw new \RuntimeException('Config key: "'.$key.'" array not contains all keys as string');
             }
         }
+
+        return $array;
     }
 }

@@ -25,11 +25,11 @@ final class TypeGlobalNameConverterTest extends TestCase
     {
         $convertedValue = $this->converter->convert($typeName);
 
-        static::assertSame($expectedValue, $convertedValue);
+        self::assertSame($expectedValue, $convertedValue);
     }
 
     /**
-     * @return array[]
+     * @return array<array<mixed>>
      */
     public function dataProviderConvert(): array
     {

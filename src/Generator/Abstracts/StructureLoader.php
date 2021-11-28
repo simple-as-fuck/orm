@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SimpleAsFuck\Orm\Generator\Abstracts;
 
 use SimpleAsFuck\Orm\Config\Abstracts\Config;
+use SimpleAsFuck\Validator\Factory\Validator;
 
 abstract class StructureLoader
 {
@@ -106,7 +107,11 @@ abstract class StructureLoader
         $typeMap = $this->config->getMap('custom-type-templates');
         $typeTemplates = null;
         if (array_key_exists($type, $typeMap)) {
-            $typeTemplates = new TypeTemplates($type, $typeMap[$type]['read'], $typeMap[$type]['write']);
+            $typeTemplates = new TypeTemplates(
+                $type,
+                Validator::make($typeMap)->array()->key($type)->array()->key('read')->string()->notNull(),
+                Validator::make($typeMap)->array()->key($type)->array()->key('write')->string()->notNull()
+            );
         }
 
         return new ModelProperty($name, $comment, $nullable, $assignable, $type, $typeTemplates, $defaultValue, $this->renderer);

@@ -25,11 +25,11 @@ final class GetterReadValueConverterTest extends TestCase
     {
         $convertedValue = $this->converter->convert($propertyName);
 
-        static::assertSame($expectedValue, $convertedValue);
+        self::assertSame($expectedValue, $convertedValue);
     }
 
     /**
-     * @return array[]
+     * @return array<array<mixed>>
      */
     public function dataProviderConvert(): array
     {

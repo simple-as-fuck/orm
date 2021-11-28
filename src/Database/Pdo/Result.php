@@ -17,6 +17,7 @@ final class Result extends \SimpleAsFuck\Orm\Database\Abstracts\Result
 
     public function fetch(): ?\stdClass
     {
+        /** @var \stdClass|false $result */
         $result = $this->statement->fetchObject();
         if ($result === false) {
             return null;
@@ -26,6 +27,11 @@ final class Result extends \SimpleAsFuck\Orm\Database\Abstracts\Result
 
     public function lastInsertedId(): ?string
     {
-        return $this->pdo->lastInsertId();
+        $id = $this->pdo->lastInsertId();
+        if ($id === false) {
+            return null;
+        }
+
+        return $id;
     }
 }
