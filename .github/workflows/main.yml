@@ -44,6 +44,82 @@ jobs:
             - name: Run tests
               run: vendor/bin/phpunit test/
 
+    php81a:
+      name: "php 8.1, flysystem 2, validator 0.2"
+      runs-on: ubuntu-latest
+      container: "nofutur3/php-tests:8.1"
+      services:
+        database:
+          image: "mysql:5.7"
+          env:
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: database
+      steps:
+        - name: Wait for mysql start
+          run: sleep 4
+
+        - name: Checkout repository
+          uses: actions/checkout@v2
+
+        - name: Install dependencies
+          run: composer update --no-interaction --with league/flysystem:^2.0 --with simple-as-fuck/php-validator:^0.2.0
+
+        - name: Prepare database
+          run: php test/Integration/Generator/TestMysqlTables.php
+
+        - name: Generate test classis
+          run: composer test:orm:generate
+
+        - name: Check genarated test classis
+          run: composer test:orm:check
+
+        - name: Chesk code style
+          run: vendor/bin/php-cs-fixer fix --dry-run --no-interaction
+
+        - name: Run static analysis
+          run: vendor/bin/phpstan analyse
+
+        - name: Run tests
+          run: vendor/bin/phpunit test/
+
+    php81b:
+      name: "php 8.1, validator 0.1"
+      runs-on: ubuntu-latest
+      container: "nofutur3/php-tests:8.1"
+      services:
+        database:
+          image: "mysql:5.7"
+          env:
+            MYSQL_ROOT_PASSWORD: password
+            MYSQL_DATABASE: database
+      steps:
+        - name: Wait for mysql start
+          run: sleep 4
+
+        - name: Checkout repository
+          uses: actions/checkout@v2
+
+        - name: Install dependencies
+          run: composer update --no-interaction --with simple-as-fuck/php-validator:^0.1.0
+
+        - name: Prepare database
+          run: php test/Integration/Generator/TestMysqlTables.php
+
+        - name: Generate test classis
+          run: composer test:orm:generate
+
+        - name: Check genarated test classis
+          run: composer test:orm:check
+
+        - name: Chesk code style
+          run: vendor/bin/php-cs-fixer fix --dry-run --no-interaction
+
+        - name: Run static analysis
+          run: vendor/bin/phpstan analyse
+
+        - name: Run tests
+          run: vendor/bin/phpunit test/
+
     php74:
         name: "php 7.4"
         runs-on: ubuntu-latest
