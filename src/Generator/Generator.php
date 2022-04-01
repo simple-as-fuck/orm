@@ -155,6 +155,7 @@ final class Generator
      */
     private function loadExistingFilePaths(FilesystemReader $filesystem): array
     {
+        /** @var array<string> */
         return $filesystem
             ->listContents('', true)
             ->filter(fn (StorageAttributes $attributes): bool => $attributes->isFile())
