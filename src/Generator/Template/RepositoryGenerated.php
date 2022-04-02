@@ -54,7 +54,7 @@ abstract class <?= $modelStructure->getName() ?>Repository
         $selectProperties[] = '$'.$primaryKey->renderReadCode($primaryKey->getName());
     }
 ?>
-    final public function selectByPrimaryKey(<?= implode(', ', $primaryKeyParams) ?>): ?<?= $modelStructure->getName()."\n" ?>
+    final public function fetchByPrimaryKey(<?= implode(', ', $primaryKeyParams) ?>): ?<?= $modelStructure->getName()."\n" ?>
     {
         $result = $this->connection->query('select * from `<?= $modelStructure->getName() ?>` where <?= implode(' and ', $wherePrimaryKeys) ?>', [<?= implode(', ', $selectProperties) ?>]);
         $result = new <?= $modelStructure->getName() ?>Result($result);

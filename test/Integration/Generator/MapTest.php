@@ -45,19 +45,19 @@ final class MapTest extends TestCase
 
         $this->repository->insert($model);
 
-        $notFound = $this->repository->selectByPrimaryKey(3, 1);
-        $insertedModel = $this->repository->selectByPrimaryKey(2, 1);
+        $notFound = $this->repository->fetchByPrimaryKey(3, 1);
+        $insertedModel = $this->repository->fetchByPrimaryKey(2, 1);
 
-        static::assertNull($notFound);
-        static::assertNotSame($model, $insertedModel);
-        static::assertEquals($model, $insertedModel);
-        static::assertSame('2-1', $insertedModel ? $insertedModel->getPrimaryKey() : null);
+        self::assertNull($notFound);
+        self::assertNotSame($model, $insertedModel);
+        self::assertEquals($model, $insertedModel);
+        self::assertSame('2-1', $insertedModel ? $insertedModel->convertPrimaryKeyToIndex() : null);
     }
 
     public function testNotGeneratedUpdate(): void
     {
-        static::assertFalse(method_exists($this->repository, 'update'));
-        static::assertFalse(method_exists($this->repository, 'multiUpdate'));
+        self::assertFalse(method_exists($this->repository, 'update'));
+        self::assertFalse(method_exists($this->repository, 'multiUpdate'));
     }
 
     public function testDelete(): void
@@ -67,8 +67,8 @@ final class MapTest extends TestCase
         $model = new TestMap(3, 1);
         $this->repository->delete($model);
 
-        $deletedModel = $this->repository->selectByPrimaryKey(3, 1);
+        $deletedModel = $this->repository->fetchByPrimaryKey(3, 1);
 
-        static::assertNull($deletedModel);
+        self::assertNull($deletedModel);
     }
 }

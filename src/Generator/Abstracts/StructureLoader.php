@@ -50,12 +50,6 @@ abstract class StructureLoader
                 throw new \LogicException('Model: "'.$model->getName().'" has to many not assignable primaryKeys. Maximum of loaded primary keys from persist layer is one!');
             }
 
-            foreach ($model->getAdditionalKeys() as $modelProperty) {
-                if ($modelProperty->getName() === 'primaryKey') {
-                    throw new \LogicException('Model: "'.$model->getName().'" can not have additional key named: "primaryKey"!');
-                }
-            }
-
             $simpleParams = [];
             $paramsWithDefaultValues = [];
             foreach ($model->getSimpleParams() as $modelProperty) {

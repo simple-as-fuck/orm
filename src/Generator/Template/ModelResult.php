@@ -57,7 +57,7 @@ final class <?= $modelStructure->getName()."Result\n" ?>
     }
 
     /**
-     * @return <?= $modelStructure->getName() ?>[] indexed by primary key value
+     * @return array<non-empty-string, <?= $modelStructure->getName() ?>> indexed by primary key converted into string
      */
     public function fetchAll(): array
     {
@@ -68,7 +68,7 @@ final class <?= $modelStructure->getName()."Result\n" ?>
                 break;
             }
 
-            $models[$model->getPrimaryKey()] = $model;
+            $models[$model->convertPrimaryKeyToIndex()] = $model;
         }
 
         return $models;

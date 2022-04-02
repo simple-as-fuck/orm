@@ -45,9 +45,9 @@ final class MultiplePrimaryKeyTest extends TestCase
 
         $this->repository->insert($model);
 
-        $insertedModel = $this->repository->selectByPrimaryKey($model->getDate(), $model->getId());
+        $insertedModel = $this->repository->fetchByPrimaryKey($model->getDate(), $model->getId());
 
-        static::assertEquals($model, $insertedModel);
+        self::assertEquals($model, $insertedModel);
     }
 
     public function testUpdate(): void
@@ -64,10 +64,10 @@ final class MultiplePrimaryKeyTest extends TestCase
 
         $this->repository->update($model);
 
-        $updatedModel = $this->repository->selectByPrimaryKey($date, $id);
+        $updatedModel = $this->repository->fetchByPrimaryKey($date, $id);
 
-        static::assertEquals($model, $updatedModel);
-        static::assertNotSame($model, $updatedModel);
+        self::assertEquals($model, $updatedModel);
+        self::assertNotSame($model, $updatedModel);
     }
 
     public function testDelete(): void
@@ -79,9 +79,9 @@ final class MultiplePrimaryKeyTest extends TestCase
 
         $this->repository->delete($model);
 
-        $deletedModel = $this->repository->selectByPrimaryKey($date, 1);
+        $deletedModel = $this->repository->fetchByPrimaryKey($date, 1);
 
-        static::assertNull($deletedModel);
+        self::assertNull($deletedModel);
     }
 
     public function testSelect(): void
@@ -97,7 +97,7 @@ final class MultiplePrimaryKeyTest extends TestCase
         $models = $this->repository->selectByAnotherId(null)->fetchAll();
         $foundModel = $this->repository->selectByAnotherId(1)->fetch();
 
-        static::assertCount(2, $models);
-        static::assertSame($expectedId, $foundModel ? $foundModel->getId() : null);
+        self::assertCount(2, $models);
+        self::assertSame($expectedId, $foundModel ? $foundModel->getId() : null);
     }
 }

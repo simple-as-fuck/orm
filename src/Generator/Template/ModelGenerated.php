@@ -119,9 +119,14 @@ abstract class <?= $modelStructure->getName()."\n" ?>
     }
 
     echo
-        "    final public function getPrimaryKey(): string\n".
+        "    /**\n".
+        "     * @return non-empty-string\n".
+        "     */\n".
+        "    final public function convertPrimaryKeyToIndex(): string\n".
         "    {\n".
-        '        return '.implode(" . '-' . ", $primaryKeys).";\n".
+        "        /** @var non-empty-string \$index */\n".
+        '        $index = '.implode(" . '-' . ", $primaryKeys).";\n".
+        "        return \$index;\n".
         "    }\n"
     ;
 ?>
