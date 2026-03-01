@@ -1,6 +1,7 @@
 {
     "name": "simple-as-fuck/orm",
     "description": "Simple orm with class generation.",
+    "license": "Unlicense",
     "require": {
         "php": "^7.4|^8.0",
         "ext-pdo": "*",
